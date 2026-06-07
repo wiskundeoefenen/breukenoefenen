@@ -831,9 +831,42 @@ function afp_fracInFrac(){
 }
 
 
+
 function genSimplifyQ(){
-  return genQ(2); // bestaande vereenvoudig-opgaven (één breuk) uit de generator
+  const k = ri(2,4);
+  const type = choice(['lin','xy','factorx','quad']);
+
+  if(type==='lin'){
+    const a=ri(1,4), b=ri(1,4), d=ri(2,5);
+    return {
+      q: Frac(Poly([Mono(k*a,1),Mono(k*b)]), Mono(k*d)),
+      s: Frac(Poly([Mono(a,1),Mono(b)]), Mono(d))
+    };
+  }
+
+  if(type==='xy'){
+    const a=ri(1,4), b=ri(1,4), d=ri(2,4);
+    return {
+      q: Frac(Poly([Mono(k*a,1,1),Mono(k*b,0,1)]), Mono(k*d,0,1)),
+      s: Frac(Poly([Mono(a,1,0),Mono(b)]), Mono(d))
+    };
+  }
+
+  if(type==='factorx'){
+    const a=ri(1,3), b=ri(1,3), d=ri(2,4);
+    return {
+      q: Frac(Poly([Mono(k*a,2),Mono(k*b,1)]), Mono(k*d,1)),
+      s: Frac(Poly([Mono(a,1),Mono(b)]), Mono(d))
+    };
+  }
+
+  const a=ri(1,3), b=ri(1,3), d=ri(2,4);
+  return {
+    q: Frac(Poly([Mono(k*a,3),Mono(k*b,2)]), Mono(k*d,2)),
+    s: Frac(Poly([Mono(a,1),Mono(b)]), Mono(d))
+  };
 }
+
 
 function genCombineQ(){
   const a = ri(1,4), b = ri(1,4);
@@ -898,7 +931,7 @@ function editorTextFromNode(node){
   return Array.from(node.childNodes).map(editorTextFromNode).join('');
 }
 function getEditorRaw(){
-  return editorTextFromNode(document.getElementById('afp-input')).replace(/\u00a0/g,' ');
+  return editorTextFromNode(document.getElementById('afp-input')).replace(/\u00a0/g,' ').replace(/²/g,'^2').replace(/³/g,'^3');
 }
 function getEditorDisplayHtml(){
   const clone = document.getElementById('afp-input').cloneNode(true);
@@ -1069,7 +1102,7 @@ function clearOwnProblem(){
   document.getElementById('afp-own-input').focus();
 }
 function ownProblemRaw(){
-  return editorTextFromNode(document.getElementById('afp-own-input')).replace(/\u00a0/g,' ').trim();
+  return editorTextFromNode(document.getElementById('afp-own-input')).replace(/\u00a0/g,' ').replace(/²/g,'^2').replace(/³/g,'^3').trim();
 }
 function setOwnProblem(){
   const raw = ownProblemRaw();
@@ -1097,6 +1130,29 @@ function setOwnProblem(){
   toggleOwnProblem(false);
   setTimeout(() => document.getElementById('afp-input').focus(), 60);
 }
+
+
+function prettifyEditorPowers(editor){
+  if(!editor) return;
+  const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT);
+  const texts = [];
+  while(walker.nextNode()) texts.push(walker.currentNode);
+  texts.forEach(n=>{
+    n.nodeValue = n.nodeValue
+      .replace(/x\^2/g,'x²')
+      .replace(/y\^2/g,'y²')
+      .replace(/z\^2/g,'z²')
+      .replace(/x\^3/g,'x³')
+      .replace(/y\^3/g,'y³')
+      .replace(/z\^3/g,'z³');
+  });
+}
+
+document.addEventListener('input', function(e){
+  if(e.target && (e.target.id==='afp-input' || e.target.id==='afp-own-input')){
+    prettifyEditorPowers(e.target);
+  }
+});
 
 // expose globals
 window.afp_setMode = setMode;
