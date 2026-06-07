@@ -1042,6 +1042,11 @@ function placeCaretAtEnd(el){
   sel.addRange(range);
 }
 function activeEditor(){
+  const ownPanel=document.getElementById('afp-own-panel');
+  const ownInput=document.getElementById('afp-own-input');
+  if(ownPanel && ownPanel.style.display!=='none' && ownInput){
+    return ownInput;
+  }
   const ae=document.activeElement;
   if(ae && (ae.id==='afp-input' || ae.id==='afp-own-input')) return ae;
   const sel = window.getSelection();
@@ -1188,10 +1193,18 @@ function toggleOwnProblem(force){
   }
 }
 function clearOwnProblem(){
-  document.getElementById('afp-own-input').innerHTML = '';
+  const mf = document.getElementById('afp-own-input');
+  if(mf){
+    try{
+      if(mf.setValue) mf.setValue('');
+      else mf.innerHTML = '';
+    }catch(e){
+      mf.innerHTML = '';
+    }
+    mf.focus();
+  }
   const err = document.getElementById('afp-own-error');
   err.style.display = 'none';
-  document.getElementById('afp-own-input').focus();
 }
 function ownProblemRaw(){
   const mf=document.getElementById('afp-own-input');
