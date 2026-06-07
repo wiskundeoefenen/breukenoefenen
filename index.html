@@ -46,7 +46,7 @@ body {
 }
 
 .afp-editor{font-size:1.45rem;font-family:var(--font-serif,Georgia,serif);width:100%;border:1px solid var(--color-border-tertiary);background:var(--color-background-primary);outline:none;color:var(--color-text-primary);padding:14px 16px;border-radius:10px;box-sizing:border-box;min-height:66px;line-height:1.6;}
-.afp-editor:focus{border-color:#993C1D;}
+.afp-editor:focus{border-color:var(--color-border-tertiary);box-shadow:none;outline:none;}
 .afp-editor:leeg:before{content:attr(data-placeholder);color:var(--color-text-secondary);font-family:var(--font-mono,ui-monospace,monospace);font-size:1rem;}
 .afp-frac-edit{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px;line-height:1.1;}
 .afp-frac-edit .num,.afp-frac-edit .den{min-width:28px;min-height:1.2em;padding:1px 8px;text-align:center;outline:0;}
@@ -60,6 +60,37 @@ body {
 .afp-trial.answer{border-color:#4a90c2;background:#e8f3fb;color:#164b73;}
 
 @media (max-width:760px){.afp-workspace{grid-template-columns:1fr!important;}}
+
+math-field::part(menu-toggle),
+math-field::part(virtual-keyboard-toggle){
+  display:none !important;
+}
+
+.afp-trial.correct math-field{
+  color:#145725 !important;
+}
+.afp-trial.answer math-field{
+  color:#164b73 !important;
+}
+.afp-trial.fout math-field{
+  color:#7a1f1f !important;
+}
+
+
+.afp-trial.correct{
+  background:#eef8ee !important;
+  border:1px solid #8fce8f !important;
+}
+.afp-trial.correct .mark,
+.afp-trial.correct math-field,
+.afp-trial.correct .afp-math{
+  color:#1f8f3a !important;
+}
+
+</style>
+<script type="module" src="https://unpkg.com/mathlive"></script>
+<style>
+math-field{--caret-color:#993C1D;min-height:66px}
 </style>
 </head>
 <body>
@@ -108,15 +139,15 @@ body {
     <button class="afp-btn secondary" onclick="afp_vereenvoudigen()">Vereenvoudigen</button>
     <button class="afp-btn secondary" onclick="afp_samenvoegen()">Samenvoegen</button>
     <button class="afp-btn secondary" onclick="afp_fracInFrac()">Breuk in breuk</button>
-    <button class="afp-btn primary" onclick="afp_check()">Controleer</button>
-    <button class="afp-btn tertiary" onclick="afp_showA()">Correct antwoord</button>
     <button class="afp-btn secondary" onclick="afp_toggleOwnProblem()">Eigen opgave invoeren</button>
+    <div style="flex-basis:100%;height:0;"></div>
+    <button class="afp-btn tertiary" onclick="afp_showA()">Correct antwoord</button>
   </div>
 
   <!-- Own opgave panel -->
   <div id="afp-own-panel" style="display:none;margin:0 0 1.25rem;padding:14px;background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:10px;">
     <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 8px;font-weight:500;">voer je eigen opgave in:</p>
-    <div class="afp-editor" id="afp-own-input" contenteditable="true" data-placeholder="typ de beginuitdrukking, bv. (4x+8)/4 of (x+1)/(x-1)"></div>
+    <math-field class="afp-editor" id="afp-own-input" virtual-keyboard-mode="off" style="width:100%;display:block;"></math-field>
     <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
       <button class="afp-sym" onclick="afp_insertFrac()" title="Breuk invoegen">
         <span class="afp-frac"><span class="num">a</span><span class="bar"></span><span class="den">b</span></span>
@@ -142,12 +173,12 @@ body {
   <div class="afp-workspace" style="display:grid;grid-template-columns:minmax(280px,1fr) minmax(280px,1fr);gap:16px;align-items:start;margin-bottom:1rem;">
     <div>
       <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 8px;font-weight:500;">opgave</p>
-      <div id="afp-q" class="afp-qcard" style="height:auto;min-height:160px;overflow-wrap:anywhere;"></div>
+      <div id="afp-q" class="afp-qcard" style="height:auto;min-height:160px;overflow-wrap:anywhere;"></math-field>
     </div>
     <div>
       <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 8px;font-weight:500;">jouw herschrijving</p>
-      <div class="afp-editor" id="afp-input" contenteditable="true" data-placeholder="voer een gelijkwaardige vorm in"
-        spellcheck="false" onkeydown="if(event.key==='Enter'){event.preventDefault();afp_check();}" oninput="afp_updatePreview()" style="min-height:160px;"></div>
+      <math-field class="afp-editor" id="afp-input" virtual-keyboard-mode="off"
+        spellcheck="false" onkeydown="if(event.key==='Enter'){event.preventDefault();afp_check();}" oninput="afp_updatePreview()" style="min-height:160px;background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:14px;padding:2rem;"></math-field>
     </div>
   </div>
 
@@ -166,6 +197,7 @@ body {
     <button class="afp-sym" id="afp-vx" onclick="afp_insertSym('x')" title="x"><i>x</i></button>
     <button class="afp-sym" id="afp-vy" onclick="afp_insertSym('y')" title="y"><i>y</i></button>
     <button class="afp-btn secondary" onclick="afp_resetInput()" style="height:46px;">Invoer wissen</button>
+    <button class="afp-btn primary" onclick="afp_check()" style="height:46px;">Controleer</button>
   </div>
 
   <script>
@@ -357,7 +389,13 @@ function isSimplified(e){
     if(!isPoly(n.n) || !isPoly(n.d)) return false;
     const c = commonFactor(n.n, n.d);
     if(c.c !== 1 || c.x || c.y || c.z) return false;
-    // also: denominator should be non-trivial (not just 1)
+    if(
+      n.d.t==='M' &&
+      n.d.c===1 &&
+      !(n.d.x||0) &&
+      !(n.d.y||0) &&
+      !(n.d.z||0)
+    ) return false;
     return true;
   }
   return false;
@@ -441,6 +479,7 @@ function renderE(e, ctx='top'){
 // === parser ===
 function parseInput(s){
   if(!s) return null;
+  s = s.replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g,'(($1)/($2))');
   s = s.replace(/\s+/g, '')
        .replace(/²/g,'^2').replace(/³/g,'^3')
        .replace(/,/g,'.').replace(/[×·∗]/g,'*').replace(/[−–]/g,'-').replace(/[:÷]/g,'/')
@@ -803,6 +842,50 @@ function genQ(nv){
   return { q: Frac(lin([Mono(2,1), Mono(4)]), Mono(2)), s: Frac(lin([Mono(1,1), Mono(2)]), Mono(1)) };
 }
 
+
+
+function cancelMonomialFactor(fr){
+  if(!(fr && fr.t==='F')) return fr;
+  if(!(isPoly(fr.n) && isPoly(fr.d))) return fr;
+
+  const c = commonFactor(fr.n, fr.d);
+  if(c.c===1 && !(c.x||0) && !(c.y||0) && !(c.z||0)) return fr;
+
+  function dividePoly(poly,f){
+    const terms = poly.t==='P' ? poly.terms : [poly];
+    const out = terms.map(t=>({
+      ...t,
+      c:t.c/f.c,
+      x:(t.x||0)-(f.x||0),
+      y:(t.y||0)-(f.y||0),
+      z:(t.z||0)-(f.z||0)
+    }));
+    return out.length===1 ? out[0] : {t:'P',terms:out};
+  }
+
+  return {
+    t:'F',
+    n:dividePoly(fr.n,c),
+    d:dividePoly(fr.d,c)
+  };
+}
+
+function fullySimplifyAnswer(e){
+  let n = normalize(e);
+
+  for(let i=0;i<5;i++){
+    if(n && n.t==='F') n = cancelMonomialFactor(n);
+  }
+
+  if(n && n.t==='F' && n.d && n.d.t==='M'){
+    if(n.d.c===1 && !(n.d.x||0) && !(n.d.y||0) && !(n.d.z||0)){
+      return n.n;
+    }
+  }
+  return n;
+}
+
+
 // === state ===
 let mode = 'explore';
 let forceFracInFrac = false;
@@ -925,17 +1008,11 @@ function showFb(msg, type){ /* Feedback is now shown in the trial list only. */ 
 function hideFb(){ /* No separate bottom feedback area. */ }
 function upd(){ /* score and streak counters removed from the interface. */ }
 
-function editorTextFromNode(node){
-  if(node.nodeType === Node.TEXT_NODE) return node.nodeValue;
-  if(node.nodeType !== Node.ELEMENT_NODE) return '';
-  if(node.classList && node.classList.contains('afp-frac-edit')){
-    const n = node.querySelector('.num');
-    const d = node.querySelector('.den');
-    return '((' + editorTextFromNode(n).trim() + ')/(' + editorTextFromNode(d).trim() + '))';
-  }
-  return Array.from(node.childNodes).map(editorTextFromNode).join('');
-}
 function getEditorRaw(){
+  const mf=document.getElementById('afp-input');
+  if(mf && typeof mf.getValue==='function'){
+    return mf.getValue('ascii-math');
+  }
   return editorTextFromNode(document.getElementById('afp-input')).replace(/\u00a0/g,' ').replace(/²/g,'^2').replace(/³/g,'^3');
 }
 function getEditorDisplayHtml(){
@@ -948,7 +1025,8 @@ function getEditorDisplayHtml(){
 }
 function clearEditor(){
   const input = document.getElementById('afp-input');
-  input.innerHTML = '';
+  if(input && input.setValue) input.setValue('');
+  else input.innerHTML='';
 }
 function resetInput(){
   clearEditor();
@@ -964,6 +1042,8 @@ function placeCaretAtEnd(el){
   sel.addRange(range);
 }
 function activeEditor(){
+  const ae=document.activeElement;
+  if(ae && (ae.id==='afp-input' || ae.id==='afp-own-input')) return ae;
   const sel = window.getSelection();
   if(sel && sel.rangeCount){
     let node = sel.getRangeAt(0).commonAncestorContainer;
@@ -1001,33 +1081,35 @@ function updatePreview(){
   // The editor itself is now the rendered input area, so there is no separate preview window.
 }
 function insertFrac(){
-  const frac = document.createElement('span');
-  frac.className = 'afp-frac-edit';
-  frac.contentEditable = 'false';
-  frac.innerHTML = '<span class="num" contenteditable="true"></span><span class="bar"></span><span class="den" contenteditable="true"></span>';
-  insertNodeAtCaret(frac);
-  setTimeout(() => {
-    const n = frac.querySelector('.num');
-    const range = document.createRange();
-    range.selectNodeContents(n);
-    range.collapse(false);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-    n.focus();
-  }, 0);
+  const mf = activeEditor();
+  if(mf && mf.insert){
+    mf.executeCommand ? mf.executeCommand(['insert','\\frac{#@}{#?}']) : mf.insert('\\frac{}{}');
+    mf.focus();
+    return;
+  }
 }
 function insertSym(sym){
-  const editor = activeEditor();
-  editor.focus();
-  document.execCommand('insertText', false, sym);
+  const mf = activeEditor();
+  if(mf && mf.insert){
+    if(sym==='^2'){
+      mf.executeCommand && mf.executeCommand(['insert','^{2}']);
+      mf.focus(); return;
+    }
+    else{
+      mf.executeCommand ? mf.executeCommand(['insert',sym]) : mf.insert(sym);
+    }
+    mf.focus();
+  }
 }
-function addTrial(exprHtml, ok, label){
+function addTrial(exprHtml, ok, label, latex){
   const box = document.getElementById('afp-trials');
   const list = document.getElementById('afp-trial-list');
   const row = document.createElement('div');
-  row.className = 'afp-trial ' + (label === 'correct answer' ? 'answer' : (ok ? 'correct' : 'fout'));
-  row.innerHTML = '<span class="afp-math" style="font-size:1.1rem;">' + exprHtml + '</span><span class="mark">' + label + '</span>';
+  row.className = 'afp-trial ' + (label === 'Correct antwoord' ? 'answer' : (ok ? 'correct' : 'fout'));
+  const content = latex
+    ? '<math-field read-only virtual-keyboard-mode="off" style="border:none;background:transparent;">'+latex+'</math-field>'
+    : '<span class="afp-math">'+exprHtml+'</span>';
+  row.innerHTML = '<span style="flex:1">'+content+'</span><span class="mark">'+label+'</span>';
   list.insertBefore(row, list.firstChild);
   box.style.display = 'block';
 }
@@ -1035,23 +1117,25 @@ function check(){
   if(!Q) return;
   const raw = getEditorRaw().trim();
   const displayHtml = getEditorDisplayHtml();
+  const mf=document.getElementById('afp-input');
+  const trialLatex=(mf && mf.getValue)?mf.getValue('latex'):raw;
   if(!raw){
     addTrial('Voer een uitdrukking in.', false, 'leeg');
     return;
   }
   const u = parseInput(raw);
   if(!u){
-    addTrial(displayHtml, false, 'niet herkend');
+    addTrial(displayHtml, false, 'niet herkend', trialLatex);
     streak = 0; upd();
     return;
   }
   if(!equiv(u, Q.q)){
-    addTrial(displayHtml, false, 'fout');
+    addTrial(displayHtml, false, 'fout', trialLatex);
     streak = 0; upd();
     return;
   }
   if(renderE(u) === renderE(Q.q)){
-    addTrial(displayHtml, true, 'origineel');
+    addTrial(displayHtml, true, 'origineel', trialLatex);
     score++; streak++; upd();
     clearEditor();
     document.getElementById('afp-input').focus();
@@ -1059,12 +1143,12 @@ function check(){
   }
   const renderedU = renderE(u);
   if(found.some(f => renderE(f) === renderedU)){
-    addTrial(displayHtml, true, 'herhaling');
+    addTrial(displayHtml, true, 'herhaling', trialLatex);
     return;
   }
   const sim = isSimplified(u);
   found.push(u);
-  addTrial(displayHtml, true, sim ? 'correct, vereenvoudigd' : 'correct');
+  addTrial(displayHtml, true, sim ? 'Correct, vereenvoudigd' : 'Correct', trialLatex);
   score++; streak++; upd();
   clearEditor();
   document.getElementById('afp-input').focus();
@@ -1087,7 +1171,7 @@ function hint(){
 function showA(){
   if(!Q) return;
   streak = 0; upd();
-  addTrial(renderE(Q.s), true, 'correct answer');
+  const ans=fullySimplifyAnswer(Q.s); addTrial(renderE(ans), true, 'Correct antwoord', (window.currentAnswerLatex||''));
 }
 function escapeHtml(s){
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -1110,6 +1194,10 @@ function clearOwnProblem(){
   document.getElementById('afp-own-input').focus();
 }
 function ownProblemRaw(){
+  const mf=document.getElementById('afp-own-input');
+  if(mf && typeof mf.getValue==='function'){
+    return mf.getValue('ascii-math').trim();
+  }
   return editorTextFromNode(document.getElementById('afp-own-input')).replace(/\u00a0/g,' ').replace(/²/g,'^2').replace(/³/g,'^3').trim();
 }
 function setOwnProblem(){
@@ -1126,7 +1214,7 @@ function setOwnProblem(){
     err.style.display = 'block';
     return;
   }
-  const simplifiedCandidate = normalize(parsed);
+  const simplifiedCandidate = fullySimplifyAnswer(normalize(parsed));
   Q = { q: parsed, s: simplifiedCandidate || parsed, own: true };
   found = [];
   document.getElementById('afp-q').innerHTML = '<span class="afp-math">' + renderE(Q.q) + '</span>';
@@ -1138,6 +1226,7 @@ function setOwnProblem(){
   toggleOwnProblem(false);
   setTimeout(() => document.getElementById('afp-input').focus(), 60);
 }
+
 
 
 // expose globals
