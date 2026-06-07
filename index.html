@@ -104,14 +104,13 @@ body {
 
   <!-- Action buttons: placed above generated equation -->
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin:0 0 1.25rem;justify-content:center;">
-    <button class="afp-btn primary" onclick="afp_check()">Controleer</button>
     <button class="afp-btn secondary" onclick="afp_alles()">Alles oefenen</button>
     <button class="afp-btn secondary" onclick="afp_vereenvoudigen()">Vereenvoudigen</button>
     <button class="afp-btn secondary" onclick="afp_samenvoegen()">Samenvoegen</button>
     <button class="afp-btn secondary" onclick="afp_fracInFrac()">Breuk in breuk</button>
-    <button class="afp-btn secondary" onclick="afp_toggleOwnProblem()">Eigen opgave invoeren</button>
-    <button class="afp-btn tertiary" onclick="afp_hint()" id="afp-hbtn">Hint</button>
+    <button class="afp-btn primary" onclick="afp_check()">Controleer</button>
     <button class="afp-btn tertiary" onclick="afp_showA()">Correct antwoord</button>
+    <button class="afp-btn secondary" onclick="afp_toggleOwnProblem()">Eigen opgave invoeren</button>
   </div>
 
   <!-- Own opgave panel -->
@@ -413,7 +412,13 @@ function renderE(e, ctx='top'){
     return s;
   }
   if(e.t==='F'){
-    return `<span class="afp-frac"><span class="num">${renderE(e.n,'frac')}</span><span class="bar"></span><span class="den">${renderE(e.d,'frac')}</span></span>`;
+    const num = (e.n && e.n.t==='F')
+      ? '(' + renderE(e.n,'frac') + ')'
+      : renderE(e.n,'frac');
+    const den = (e.d && e.d.t==='F')
+      ? '(' + renderE(e.d,'frac') + ')'
+      : renderE(e.d,'frac');
+    return `<span class="afp-frac"><span class="num">${num}</span><span class="bar"></span><span class="den">${den}</span></span>`;
   }
   if(e.t==='O'){
     let inner;
@@ -438,7 +443,7 @@ function parseInput(s){
   if(!s) return null;
   s = s.replace(/\s+/g, '')
        .replace(/²/g,'^2').replace(/³/g,'^3')
-       .replace(/[×·∗]/g,'*').replace(/[−–]/g,'-').replace(/÷/g,'/')
+       .replace(/,/g,'.').replace(/[×·∗]/g,'*').replace(/[−–]/g,'-').replace(/[:÷]/g,'/')
        .replace(/[\[{]/g,'(').replace(/[\]}]/g,')');
   if(!s) return null;
   let pos = 0;
@@ -936,7 +941,10 @@ function getEditorRaw(){
 function getEditorDisplayHtml(){
   const clone = document.getElementById('afp-input').cloneNode(true);
   clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
-  return clone.innerHTML.trim() || escapeHtml(getEditorRaw().trim());
+  let h = clone.innerHTML.trim() || escapeHtml(getEditorRaw().trim());
+  h = h.replace(/([xyz])\^2/g,'<i>$1</i><sup>2</sup>');
+  h = h.replace(/([xyz])\^3/g,'<i>$1</i><sup>3</sup>');
+  return h;
 }
 function clearEditor(){
   const input = document.getElementById('afp-input');
@@ -1131,28 +1139,6 @@ function setOwnProblem(){
   setTimeout(() => document.getElementById('afp-input').focus(), 60);
 }
 
-
-function prettifyEditorPowers(editor){
-  if(!editor) return;
-  const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT);
-  const texts = [];
-  while(walker.nextNode()) texts.push(walker.currentNode);
-  texts.forEach(n=>{
-    n.nodeValue = n.nodeValue
-      .replace(/x\^2/g,'x²')
-      .replace(/y\^2/g,'y²')
-      .replace(/z\^2/g,'z²')
-      .replace(/x\^3/g,'x³')
-      .replace(/y\^3/g,'y³')
-      .replace(/z\^3/g,'z³');
-  });
-}
-
-document.addEventListener('input', function(e){
-  if(e.target && (e.target.id==='afp-input' || e.target.id==='afp-own-input')){
-    prettifyEditorPowers(e.target);
-  }
-});
 
 // expose globals
 window.afp_setMode = setMode;
