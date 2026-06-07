@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oefenen met Algebraïsche Breuken</title>
+<style>
+:root {
+  --color-text-primary:#1f1f1f;
+  --color-text-secondary:#666;
+  --color-border-tertiary:#d0d0d0;
+  --color-border-secondary:#b8b8b8;
+  --color-background-primary:#ffffff;
+  --color-background-secondary:#f6f4f2;
+  --color-background-tertiary:#eeeae6;
+  --color-background-success:#eaf6ec;
+  --color-text-success:#1f6f3a;
+  --color-border-success:#9fd2aa;
+  --color-background-danger:#fdecec;
+  --color-text-danger:#8a1f1f;
+  --color-border-danger:#e3a0a0;
+  --color-background-info:#edf4fb;
+  --color-text-info:#1d4f7a;
+  --color-border-info:#9fc2df;
+  --border-radius-md:10px;
+  --font-serif: Georgia, 'Times New Roman', serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+body {
+  margin:0;
+  padding:24px;
+  background:#fafafa;
+  color:var(--color-text-primary);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.sr-only {
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+
+.afp-editor{font-size:1.45rem;font-family:var(--font-serif,Georgia,serif);width:100%;border:1px solid var(--color-border-tertiary);background:var(--color-background-primary);outline:none;color:var(--color-text-primary);padding:14px 16px;border-radius:10px;box-sizing:border-box;min-height:66px;line-height:1.6;}
+.afp-editor:focus{border-color:#993C1D;}
+.afp-editor:leeg:before{content:attr(data-placeholder);color:var(--color-text-secondary);font-family:var(--font-mono,ui-monospace,monospace);font-size:1rem;}
+.afp-frac-edit{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px;line-height:1.1;}
+.afp-frac-edit .num,.afp-frac-edit .den{min-width:28px;min-height:1.2em;padding:1px 8px;text-align:center;outline:0;}
+.afp-frac-edit .bar{display:block;height:1.5px;background:currentColor;width:100%;min-width:100%;align-self:stretch;margin:1px 0;}
+.afp-trial{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-radius:10px;border:1px solid;margin:8px 0;background:var(--color-background-primary);}
+.afp-trial.correct{border-color:#4b9b57;background:var(--color-background-success);color:var(--color-text-success);}
+.afp-trial.fout{border-color:#b84d4d;background:var(--color-background-danger);color:var(--color-text-danger);}
+.afp-trial .mark{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;}
+.afp-trial.correct{border-color:#2f8f46;background:#e7f6ea;color:#145725;}
+.afp-trial.fout{border-color:#b84d4d;background:#fde8e8;color:#7a1f1f;}
+.afp-trial.answer{border-color:#4a90c2;background:#e8f3fb;color:#164b73;}
+
+@media (max-width:760px){.afp-workspace{grid-template-columns:1fr!important;}}
+</style>
+</head>
+<body>
+
+<h2 class="sr-only">Algebraic fraction practice — vereenvoudig of onderzoek gelijkwaardige vormen met polynomiale uitdrukkingen</h2>
+
+<style>
+.afp-tab{padding:8px 18px;font-size:13px;border:none;background:transparent;cursor:pointer;color:var(--color-text-secondary);border-bottom:2.5px solid transparent;margin-bottom:-0.5px;font-family:inherit;}
+.afp-tab.on{color:var(--color-text-primary);border-bottom-color:#993C1D;font-weight:500;}
+.afp-diff{padding:6px 14px;font-size:14px;border:0.5px solid var(--color-border-tertiary);background:transparent;cursor:pointer;color:var(--color-text-secondary);border-radius:var(--border-radius-md);font-family:var(--font-serif);min-width:42px;}
+.afp-diff.on{background:var(--color-background-secondary);color:var(--color-text-primary);border-color:#993C1D;font-weight:500;}
+.afp-diff i{font-family:var(--font-serif);font-style:italic;}
+.afp-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:13px;margin:3px;color:var(--color-text-primary);vertical-align:middle;}
+.afp-chip.ok{border-color:#993C1D;}
+.afp-code{font-size:11px;background:var(--color-background-secondary);padding:1px 4px;border-radius:3px;font-family:var(--font-mono,ui-monospace,monospace);}
+.afp-qcard{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:14px;padding:2.5rem 2rem;min-height:120px;display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:2rem;line-height:1.4;color:var(--color-text-primary);}
+.afp-qcard i{font-style:italic;}
+.afp-input{font-size:1.1rem;font-family:var(--font-mono,ui-monospace,monospace);width:100%;border:1px solid var(--color-border-tertiary);background:var(--color-background-primary);outline:none;color:var(--color-text-primary);padding:14px 16px;border-radius:10px;box-sizing:border-box;min-height:52px;}
+.afp-input:focus{border-color:#993C1D;}
+.afp-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 3px;}
+.afp-frac > .num, .afp-frac > .den{padding:1px 8px;display:block;white-space:nowrap;}
+.afp-frac > .bar{display:block;height:1.5px;background:currentColor;width:100%;min-width:100%;align-self:stretch;margin:1px 0;}
+.afp-math{font-family:var(--font-serif);}
+.afp-math i{font-style:italic;}
+.afp-sym{width:46px;height:46px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--color-border-tertiary);background:var(--color-background-primary);color:var(--color-text-primary);border-radius:10px;cursor:pointer;font-family:var(--font-serif);font-size:1.2rem;padding:0;}
+.afp-sym:hover{border-color:#993C1D;background:var(--color-background-secondary);}
+.afp-sym i{font-style:italic;}
+.afp-sym .afp-frac{font-size:1rem;}
+.afp-btn{padding:11px 22px;font-size:14px;cursor:pointer;border:1px solid transparent;background:var(--color-background-primary);color:var(--color-text-primary);border-radius:10px;font-family:inherit;font-weight:500;}
+.afp-btn.primary{background:#993C1D;color:#fff;border-color:#993C1D;}
+.afp-btn.primary:hover{background:#7a3017;}
+.afp-btn.secondary{background:var(--color-background-secondary);color:var(--color-text-primary);border-color:var(--color-border-tertiary);}
+.afp-btn.secondary:hover{background:var(--color-background-tertiary,var(--color-background-secondary));border-color:var(--color-border-secondary);}
+.afp-btn.tertiary{background:transparent;color:var(--color-text-secondary);border-color:var(--color-border-tertiary);}
+.afp-btn.tertiary:hover{color:var(--color-text-primary);background:var(--color-background-secondary);}
+</style>
+
+<div style="padding:1rem 0;max-width:980px;margin:0 auto;">
+
+<div style="background:var(--color-background-secondary);border-radius:14px;padding:1.5rem;">
+  <p id="afp-inst" style="font-size:13px;color:var(--color-text-secondary);margin:0 0 1.25rem;line-height:1.5;text-align:center;"></p>
+
+  <!-- Action buttons: placed above generated equation -->
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin:0 0 1.25rem;justify-content:center;">
+    <button class="afp-btn primary" onclick="afp_check()">Controleer</button>
+    <button class="afp-btn secondary" onclick="afp_alles()">Alles oefenen</button>
+    <button class="afp-btn secondary" onclick="afp_vereenvoudigen()">Vereenvoudigen</button>
+    <button class="afp-btn secondary" onclick="afp_samenvoegen()">Samenvoegen</button>
+    <button class="afp-btn secondary" onclick="afp_fracInFrac()">Breuk in breuk</button>
+    <button class="afp-btn secondary" onclick="afp_toggleOwnProblem()">Eigen opgave invoeren</button>
+    <button class="afp-btn tertiary" onclick="afp_hint()" id="afp-hbtn">Hint</button>
+    <button class="afp-btn tertiary" onclick="afp_showA()">Correct antwoord</button>
+  </div>
+
+  <!-- Own opgave panel -->
+  <div id="afp-own-panel" style="display:none;margin:0 0 1.25rem;padding:14px;background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:10px;">
+    <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 8px;font-weight:500;">voer je eigen opgave in:</p>
+    <div class="afp-editor" id="afp-own-input" contenteditable="true" data-placeholder="typ de beginuitdrukking, bv. (4x+8)/4 of (x+1)/(x-1)"></div>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+      <button class="afp-sym" onclick="afp_insertFrac()" title="Breuk invoegen">
+        <span class="afp-frac"><span class="num">a</span><span class="bar"></span><span class="den">b</span></span>
+      </button>
+      <button class="afp-sym" onclick="afp_insertSym('^2')" title="Kwadrateren (macht 2)"><i>x</i><sup style="font-size:.7em;">2</sup></button>
+      <button class="afp-sym" onclick="afp_insertSym('*')" title="Vermenigvuldigen">×</button>
+      <button class="afp-sym" onclick="afp_insertSym('/')" title="Delen">/</button>
+      <button class="afp-sym" onclick="afp_insertSym('+')" title="Plus">+</button>
+      <button class="afp-sym" onclick="afp_insertSym('-')" title="Min">−</button>
+      <button class="afp-sym" onclick="afp_insertSym('(')" title="Open haakje">(</button>
+      <button class="afp-sym" onclick="afp_insertSym(')')" title="Sluit haakje">)</button>
+      <button class="afp-sym" onclick="afp_insertSym('x')" title="x"><i>x</i></button>
+      <button class="afp-sym" onclick="afp_insertSym('y')" title="y"><i>y</i></button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+      <button class="afp-btn primary" onclick="afp_setOwnProblem()">Gebruik deze opgave</button>
+      <button class="afp-btn secondary" onclick="afp_clearOwnProblem()">Wissen</button>
+      <button class="afp-btn tertiary" onclick="afp_toggleOwnProblem(false)">Sluiten</button>
+    </div>
+    <p id="afp-own-error" style="display:none;font-size:12px;color:#7a1f1f;margin:10px 0 0;"></p>
+  </div>
+
+  <div class="afp-workspace" style="display:grid;grid-template-columns:minmax(280px,1fr) minmax(280px,1fr);gap:16px;align-items:start;margin-bottom:1rem;">
+    <div>
+      <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 8px;font-weight:500;">opgave</p>
+      <div id="afp-q" class="afp-qcard" style="height:auto;min-height:160px;overflow-wrap:anywhere;"></div>
+    </div>
+    <div>
+      <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 8px;font-weight:500;">jouw herschrijving</p>
+      <div class="afp-editor" id="afp-input" contenteditable="true" data-placeholder="voer een gelijkwaardige vorm in"
+        spellcheck="false" onkeydown="if(event.key==='Enter'){event.preventDefault();afp_check();}" oninput="afp_updatePreview()" style="min-height:160px;"></div>
+    </div>
+  </div>
+
+  <!-- Symbol insert buttons -->
+  <div id="afp-symbol-row" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center;">
+    <button class="afp-sym" onclick="afp_insertFrac()" title="Breuk invoegen">
+      <span class="afp-frac"><span class="num">a</span><span class="bar"></span><span class="den">b</span></span>
+    </button>
+    <button class="afp-sym" onclick="afp_insertSym('^2')" title="Kwadrateren (macht 2)"><i>x</i><sup style="font-size:.7em;">2</sup></button>
+    <button class="afp-sym" onclick="afp_insertSym('*')" title="Vermenigvuldigen">×</button>
+    <button class="afp-sym" onclick="afp_insertSym('/')" title="Delen">/</button>
+    <button class="afp-sym" onclick="afp_insertSym('+')" title="Plus">+</button>
+    <button class="afp-sym" onclick="afp_insertSym('-')" title="Min">−</button>
+    <button class="afp-sym" onclick="afp_insertSym('(')" title="Open haakje">(</button>
+    <button class="afp-sym" onclick="afp_insertSym(')')" title="Sluit haakje">)</button>
+    <button class="afp-sym" id="afp-vx" onclick="afp_insertSym('x')" title="x"><i>x</i></button>
+    <button class="afp-sym" id="afp-vy" onclick="afp_insertSym('y')" title="y"><i>y</i></button>
+    <button class="afp-btn secondary" onclick="afp_resetInput()" style="height:46px;">Invoer wissen</button>
+  </div>
+
+  <script>
+  (function(){
+    const row = document.getElementById('afp-symbol-row');
+    const input = document.getElementById('afp-input');
+    if(row && input && input.parentElement){
+      input.parentElement.appendChild(row);
+    }
+  })();
+  </script>
+
+  <!-- Live preview -->
+  <div id="afp-preview-row" style="display:none!important;margin-top:12px;padding:10px 14px;background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:10px;font-size:13px;color:var(--color-text-secondary);min-height:36px;">
+    <span style="font-size:11px;">preview:&nbsp;</span>
+    <span id="afp-preview" class="afp-math" style="font-size:1.2rem;color:var(--color-text-primary);"></span>
+  </div>
+
+  <div id="afp-trials" style="display:none;margin-top:1.25rem;padding:14px;background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:10px;">
+    <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 10px;font-weight:500;">all trials:</p>
+    <div id="afp-trial-list"></div>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+
+// === utilities ===
+const gcd = (a,b) => b===0 ? Math.abs(a) : gcd(b, a%b);
+const ri = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+const choice = arr => arr[Math.floor(Math.random()*arr.length)];
+
+// === expression types ===
+// {t:'M', c, x, y, z}              -- monomial
+// {t:'P', terms:[M]}                -- polynomial (sum of monomials)
+// {t:'F', n, d}                     -- fraction (any/any)
+// {t:'O', op:'+'|'-'|'*', a, b}     -- binary op
+// {t:'N', a}                        -- negation
+const Mono = (c,x=0,y=0,z=0) => ({t:'M',c,x,y,z});
+const Poly = terms => terms.length===1 ? terms[0] : {t:'P', terms};
+const Frac = (n,d) => ({t:'F',n,d});
+
+const isPoly = e => e && (e.t==='M' || e.t==='P');
+const isFrac = e => e && e.t==='F';
+
+// === evaluation ===
+function evalE(e,v){
+  if(e.t==='M') return e.c * Math.pow(v.x, e.x||0) * Math.pow(v.y, e.y||0) * Math.pow(v.z, e.z||0);
+  if(e.t==='P') return e.terms.reduce((s,t)=>s+evalE(t,v), 0);
+  if(e.t==='F'){
+    const d = evalE(e.d, v);
+    if(Math.abs(d) < 1e-12) return NaN;
+    return evalE(e.n, v) / d;
+  }
+  if(e.t==='O'){
+    const a = evalE(e.a, v), b = evalE(e.b, v);
+    if(e.op==='+') return a+b;
+    if(e.op==='-') return a-b;
+    if(e.op==='*') return a*b;
+    if(e.op==='/') return Math.abs(b) < 1e-12 ? NaN : a/b;
+  }
+  if(e.t==='N') return -evalE(e.a, v);
+  return 0;
+}
+
+const TV = [
+  {x:1.7, y:2.9, z:3.7},
+  {x:4.1, y:5.3, z:7.1},
+  {x:2.3, y:7.1, z:5.7},
+  {x:6.3, y:3.3, z:11.3},
+  {x:0.83, y:1.21, z:2.07}
+];
+
+function equiv(e1, e2){
+  let ok = 0;
+  for(const v of TV){
+    const a = evalE(e1, v), b = evalE(e2, v);
+    if(!isFinite(a) || !isFinite(b)) continue;
+    const denom = Math.abs(a) + Math.abs(b) + 1e-8;
+    if(Math.abs(a-b)/denom > 1e-5) return false;
+    ok++;
+  }
+  return ok >= 3;
+}
+
+// === polynomial helpers ===
+function monoMul(a, b){
+  return Mono(a.c*b.c, (a.x||0)+(b.x||0), (a.y||0)+(b.y||0), (a.z||0)+(b.z||0));
+}
+function termsClean(terms){
+  const map = new Map();
+  for(const t of terms){
+    if(t.c === 0) continue;
+    const k = `${t.x||0}_${t.y||0}_${t.z||0}`;
+    if(map.has(k)) map.get(k).c += t.c;
+    else map.set(k, {...t});
+  }
+  return [...map.values()].filter(t => t.c !== 0);
+}
+function polyAdd(a, b){
+  const ta = a.t==='P' ? a.terms : [a];
+  const tb = b.t==='P' ? b.terms : [b];
+  const out = termsClean([...ta, ...tb]);
+  return out.length === 0 ? Mono(0) : Poly(out);
+}
+function polyMul(a, b){
+  const ta = a.t==='P' ? a.terms : [a];
+  const tb = b.t==='P' ? b.terms : [b];
+  const out = [];
+  for(const x of ta) for(const y of tb) out.push(monoMul(x, y));
+  const c = termsClean(out);
+  return c.length === 0 ? Mono(0) : Poly(c);
+}
+function polyNeg(a){
+  const ta = a.t==='P' ? a.terms : [a];
+  return Poly(ta.map(t => ({...t, c: -t.c})));
+}
+function monoGCD(poly){
+  const terms = poly.t==='P' ? poly.terms : [poly];
+  if(!terms.length) return Mono(1);
+  let g = 0, mx = Infinity, my = Infinity, mz = Infinity;
+  for(const t of terms){
+    g = gcd(g, Math.abs(t.c));
+    mx = Math.min(mx, t.x||0);
+    my = Math.min(my, t.y||0);
+    mz = Math.min(mz, t.z||0);
+  }
+  return Mono(g||1, mx===Infinity?0:mx, my===Infinity?0:my, mz===Infinity?0:mz);
+}
+function commonFactor(n, d){
+  if(!isPoly(n) || !isPoly(d)) return Mono(1);
+  const gn = monoGCD(n), gd = monoGCD(d);
+  return Mono(gcd(gn.c, gd.c), Math.min(gn.x, gd.x), Math.min(gn.y, gd.y), Math.min(gn.z, gd.z));
+}
+
+// === normalize for simplification check ===
+function normalize(e){
+  if(!e) return e;
+  if(e.t==='M' || e.t==='P') return e;
+  if(e.t==='N'){
+    const a = normalize(e.a);
+    if(isPoly(a)) return polyNeg(a);
+    if(isFrac(a)) return Frac(polyNeg(a.n), a.d);
+    return e;
+  }
+  if(e.t==='F'){
+    return divNorm(normalize(e.n), normalize(e.d));
+  }
+  if(e.t==='O'){
+    const a = normalize(e.a), b = normalize(e.b);
+    if(e.op==='+') return addNorm(a, b);
+    if(e.op==='-') return addNorm(a, isPoly(b) ? polyNeg(b) : Frac(polyNeg(b.n), b.d));
+    if(e.op==='*') return mulNorm(a, b);
+    if(e.op==='/') return divNorm(a, b);
+  }
+  return e;
+}
+function addNorm(a, b){
+  if(isPoly(a) && isPoly(b)) return polyAdd(a, b);
+  if(isPoly(a) && isFrac(b)) return Frac(polyAdd(polyMul(a, b.d), b.n), b.d);
+  if(isFrac(a) && isPoly(b)) return Frac(polyAdd(a.n, polyMul(b, a.d)), a.d);
+  if(isFrac(a) && isFrac(b)) return Frac(polyAdd(polyMul(a.n, b.d), polyMul(b.n, a.d)), polyMul(a.d, b.d));
+  return a;
+}
+function mulNorm(a, b){
+  if(isPoly(a) && isPoly(b)) return polyMul(a, b);
+  if(isPoly(a) && isFrac(b)) return Frac(polyMul(a, b.n), b.d);
+  if(isFrac(a) && isPoly(b)) return Frac(polyMul(a.n, b), a.d);
+  if(isFrac(a) && isFrac(b)) return Frac(polyMul(a.n, b.n), polyMul(a.d, b.d));
+  return a;
+}
+function divNorm(a, b){
+  if(isPoly(a) && isPoly(b)) return Frac(a, b);
+  if(isPoly(a) && isFrac(b)) return Frac(polyMul(a, b.d), b.n);
+  if(isFrac(a) && isPoly(b)) return Frac(a.n, polyMul(a.d, b));
+  if(isFrac(a) && isFrac(b)) return Frac(polyMul(a.n, b.d), polyMul(a.d, b.n));
+  return a;
+}
+
+function isSimplified(e){
+  const n = normalize(e);
+  if(!n) return false;
+  if(isPoly(n)) return true;
+  if(isFrac(n)){
+    if(!isPoly(n.n) || !isPoly(n.d)) return false;
+    const c = commonFactor(n.n, n.d);
+    if(c.c !== 1 || c.x || c.y || c.z) return false;
+    // also: denominator should be non-trivial (not just 1)
+    return true;
+  }
+  return false;
+}
+
+// === rendering ===
+function monoH(m, signed=true){
+  const c = m.c;
+  let v = '';
+  for(const k of ['x','y','z']){
+    const p = m[k] || 0;
+    if(p === 1) v += `<i>${k}</i>`;
+    else if(p >= 2) v += `<i>${k}</i><sup>${p}</sup>`;
+  }
+  if(!v) return c < 0 && signed ? `−${Math.abs(c)}` : String(c);
+  if(c === 1) return v;
+  if(c === -1) return signed ? '−' + v : v;
+  if(c < 0) return (signed ? '−' : '') + Math.abs(c) + v;
+  return c + v;
+}
+
+function polyH(poly){
+  const terms = poly.t==='P' ? poly.terms : [poly];
+  const sp = [...terms].filter(t => t.c !== 0).sort((a,b)=>{
+    const da = (a.x||0)+(a.y||0)+(a.z||0), db = (b.x||0)+(b.y||0)+(b.z||0);
+    if(da !== db) return db - da;
+    if((a.x||0) !== (b.x||0)) return (b.x||0) - (a.x||0);
+    if((a.y||0) !== (b.y||0)) return (b.y||0) - (a.y||0);
+    return (b.z||0) - (a.z||0);
+  });
+  if(!sp.length) return '0';
+  let s = '';
+  for(let i = 0; i < sp.length; i++){
+    const t = sp[i];
+    if(i === 0){
+      s += monoH(t, true);
+    } else {
+      const abs = {...t, c: Math.abs(t.c)};
+      s += (t.c < 0 ? ' − ' : ' + ') + monoH(abs, false);
+    }
+  }
+  return s;
+}
+
+function renderE(e, ctx='top'){
+  if(!e) return '';
+  if(e.t==='M' || e.t==='P'){
+    const terms = e.t==='P' ? e.terms : [e];
+    const nz = terms.filter(t => t.c !== 0);
+    const s = polyH(e);
+    if(nz.length > 1 && (ctx==='mul' || ctx==='neg' || ctx==='sub')) return `(${s})`;
+    return s;
+  }
+  if(e.t==='F'){
+    return `<span class="afp-frac"><span class="num">${renderE(e.n,'frac')}</span><span class="bar"></span><span class="den">${renderE(e.d,'frac')}</span></span>`;
+  }
+  if(e.t==='O'){
+    let inner;
+    if(e.op==='*'){
+      inner = renderE(e.a,'mul') + ' · ' + renderE(e.b,'mul');
+    } else if(e.op==='/'){
+      inner = renderE(e.a,'mul') + ' / ' + renderE(e.b,'mul');
+    } else if(e.op==='+'){
+      inner = renderE(e.a,'top') + ' + ' + renderE(e.b,'top');
+    } else {
+      inner = renderE(e.a,'top') + ' − ' + renderE(e.b,'sub');
+    }
+    if(ctx==='mul' || ctx==='neg' || ctx==='sub') return `(${inner})`;
+    return inner;
+  }
+  if(e.t==='N') return '−' + renderE(e.a, 'neg');
+  return '';
+}
+
+// === parser ===
+function parseInput(s){
+  if(!s) return null;
+  s = s.replace(/\s+/g, '')
+       .replace(/²/g,'^2').replace(/³/g,'^3')
+       .replace(/[×·∗]/g,'*').replace(/[−–]/g,'-').replace(/÷/g,'/')
+       .replace(/[\[{]/g,'(').replace(/[\]}]/g,')');
+  if(!s) return null;
+  let pos = 0;
+
+  function pExpr(){
+    let left = pTerm();
+    if(!left) return null;
+    while(pos < s.length && (s[pos]==='+' || s[pos]==='-')){
+      const op = s[pos++];
+      const right = pTerm();
+      if(!right) return null;
+      left = {t:'O', op, a:left, b:right};
+    }
+    return left;
+  }
+  function pTerm(){
+    let left = pUnary();
+    if(!left) return null;
+    while(pos < s.length){
+      let op = null;
+      if(s[pos]==='*' || s[pos]==='/') op = s[pos++];
+      else if(isImplicit()) op = '*';
+      else break;
+      const right = pUnary();
+      if(!right) return null;
+      if(op === '/'){
+        left = {t:'F', n:left, d:right};
+      } else {
+        left = mulSimplify(left, right);
+      }
+    }
+    return left;
+  }
+  function isImplicit(){
+    if(pos === 0 || pos >= s.length) return false;
+    const prev = s[pos-1], curr = s[pos];
+    return /[a-z0-9)]/i.test(prev) && /[a-z(]/i.test(curr);
+  }
+  function pUnary(){
+    if(s[pos]==='-'){ pos++; const a = pPrimary(); return a ? {t:'N', a} : null; }
+    if(s[pos]==='+'){ pos++; }
+    return pPrimary();
+  }
+  function pPrimary(){
+    if(s[pos]==='('){
+      pos++;
+      const e = pExpr();
+      if(s[pos]===')') pos++;
+      return e;
+    }
+    return pMono();
+  }
+  function pMono(){
+    let c = 1, hasAny = false, x = 0, y = 0, z = 0;
+    if(/[0-9.]/.test(s[pos])){
+      let n = '';
+      while(pos < s.length && /[0-9.]/.test(s[pos])) n += s[pos++];
+      c = parseFloat(n);
+      if(!isFinite(c)) return null;
+      hasAny = true;
+    }
+    while(pos < s.length && /[a-z]/i.test(s[pos])){
+      const v = s[pos++].toLowerCase();
+      let p = 1;
+      if(s[pos]==='^'){
+        pos++;
+        let n = '';
+        while(pos < s.length && /[0-9]/.test(s[pos])) n += s[pos++];
+        if(!n) return null;
+        p = parseInt(n);
+      }
+      if(v==='x') x += p;
+      else if(v==='y') y += p;
+      else if(v==='z') z += p;
+      else return null;
+      hasAny = true;
+    }
+    if(!hasAny) return null;
+    return Mono(c, x, y, z);
+  }
+  function mulSimplify(a, b){
+    if(a.t==='M' && b.t==='M') return monoMul(a, b);
+    return {t:'O', op:'*', a, b};
+  }
+
+  try {
+    const e = pExpr();
+    if(!e || pos < s.length) return null;
+    return e;
+  } catch(err){ return null; }
+}
+
+// === question generator ===
+// Returns {q: expression, s: simplified target}
+function pickVar(nv){
+  // returns powers {x,y,z} for a randomly chosen variable
+  if(nv === 1) return [1,0,0];
+  if(nv === 2) return Math.random() < 0.5 ? [1,0,0] : [0,1,0];
+  const r = Math.random();
+  if(r < 0.4) return [1,0,0];
+  if(r < 0.75) return [0,1,0];
+  return [0,0,1];
+}
+function pickTwoDistinct(nv){
+  // pick two distinct variable index arrays
+  const all = nv === 1 ? [[1,0,0]] : nv === 2 ? [[1,0,0],[0,1,0]] : [[1,0,0],[0,1,0],[0,0,1]];
+  if(all.length === 1) return [all[0], all[0]];
+  const a = choice(all);
+  let b;
+  do { b = choice(all); } while(b === a);
+  return [a, b];
+}
+
+function genQ(nv){
+  const simpleTypes = ['lin1','lin1','linMono','quadMono'];
+  if(nv >= 2) simpleTypes.push('multi2','multi2y','multi2x','linMonoMulti');
+  if(nv >= 3) simpleTypes.push('multi3','multi3z','multi3xyz','linMono3');
+  const compoundTypes = ['sumFrac','subFrac','mulFrac','divFrac','complex','mixed'];
+  const allTypes = [...simpleTypes, ...compoundTypes, ...compoundTypes]; // slight weight to compound
+  const type = choice(allTypes);
+  const lin = ts => Poly(termsClean(ts));
+
+  if(type === 'lin1'){
+    let a1,a0,d;
+    do { a1=ri(1,4); a0=ri(-3,4); if(!a0)a0=ri(1,3); d=ri(2,5); } while(gcd(gcd(a1,Math.abs(a0)),d)>1);
+    const k = ri(2,4);
+    return {
+      q: Frac(lin([Mono(k*a1,1), Mono(k*a0)]), Mono(k*d)),
+      s: Frac(lin([Mono(a1,1), Mono(a0)]), Mono(d))
+    };
+  }
+  if(type === 'linMono'){
+    let b1,b0,c;
+    do { b1=ri(1,4); b0=ri(-3,4); if(!b0)b0=ri(1,3); c=ri(1,5); } while(gcd(gcd(b1,Math.abs(b0)),c)>1);
+    const k = ri(2,4);
+    return {
+      q: Frac(Mono(k*c), lin([Mono(k*b1,1), Mono(k*b0)])),
+      s: Frac(Mono(c), lin([Mono(b1,1), Mono(b0)]))
+    };
+  }
+  if(type === 'linMonoMulti'){
+    // c / (a x + b y)  scaled by k
+    let a,b,c;
+    do { a=ri(1,3); b=ri(-2,3); if(!b)b=ri(1,2); c=ri(1,4); } while(gcd(gcd(a,Math.abs(b)),c)>1);
+    const k = ri(2,3);
+    return {
+      q: Frac(Mono(k*c), lin([Mono(k*a,1,0), Mono(k*b,0,1)])),
+      s: Frac(Mono(c), lin([Mono(a,1,0), Mono(b,0,1)]))
+    };
+  }
+  if(type === 'linMono3'){
+    // c / (a x + b y + d z)
+    let a,b,d,c;
+    do {
+      a=ri(1,3); b=ri(-2,3); if(!b)b=ri(1,2);
+      d=ri(-2,3); if(!d)d=ri(1,2); c=ri(1,4);
+    } while(gcd(gcd(gcd(a,Math.abs(b)),Math.abs(d)),c)>1);
+    const k = ri(2,3);
+    return {
+      q: Frac(Mono(k*c), lin([Mono(k*a,1,0,0), Mono(k*b,0,1,0), Mono(k*d,0,0,1)])),
+      s: Frac(Mono(c), lin([Mono(a,1,0,0), Mono(b,0,1,0), Mono(d,0,0,1)]))
+    };
+  }
+  if(type === 'quadMono'){
+    // (a x^2 + b x) / (c x) → (a x + b) / c — also try denominators with x^2
+    const useSqDen = Math.random() < 0.4;
+    let a,b,c;
+    do { a=ri(1,4); b=ri(-3,4); if(!b)b=ri(1,3); c=ri(1,4); } while(gcd(gcd(a,Math.abs(b)),c)>1);
+    const k = ri(2,3);
+    if(useSqDen){
+      // (k a x^3 + k b x^2) / (k c x^2) → (a x + b)/c
+      return {
+        q: Frac(lin([Mono(k*a,3), Mono(k*b,2)]), Mono(k*c,2)),
+        s: Frac(lin([Mono(a,1), Mono(b)]), Mono(c))
+      };
+    }
+    return {
+      q: Frac(lin([Mono(k*a,2), Mono(k*b,1)]), Mono(k*c,1)),
+      s: Frac(lin([Mono(a,1), Mono(b)]), Mono(c))
+    };
+  }
+  if(type === 'multi2'){
+    let a1,a0,d;
+    do { a1=ri(1,3); a0=ri(-3,3); if(!a0)a0=ri(1,2); d=ri(2,4); } while(gcd(gcd(a1,Math.abs(a0)),d)>1);
+    const k = ri(2,3);
+    return {
+      q: Frac(lin([Mono(k*a1,1,0), Mono(k*a0,0,1)]), Mono(k*d)),
+      s: Frac(lin([Mono(a1,1,0), Mono(a0,0,1)]), Mono(d))
+    };
+  }
+  if(type === 'multi2y'){
+    let a1,a0,b;
+    do { a1=ri(1,3); a0=ri(-2,3); if(!a0)a0=ri(1,2); b=ri(1,3); } while(gcd(gcd(a1,Math.abs(a0)),b)>1);
+    const k = ri(2,3);
+    const useSq = Math.random() < 0.4;
+    if(useSq){
+      // (a x y^2 + b y^3) / (c y^2)
+      return {
+        q: Frac(lin([Mono(k*a1,1,2), Mono(k*a0,0,3)]), Mono(k*b,0,2)),
+        s: Frac(lin([Mono(a1,1,0), Mono(a0,0,1)]), Mono(b))
+      };
+    }
+    return {
+      q: Frac(lin([Mono(k*a1,1,1), Mono(k*a0,0,2)]), Mono(k*b,0,1)),
+      s: Frac(lin([Mono(a1,1,0), Mono(a0,0,1)]), Mono(b))
+    };
+  }
+  if(type === 'multi2x'){
+    let a1,a0,b;
+    do { a1=ri(1,3); a0=ri(-2,3); if(!a0)a0=ri(1,2); b=ri(1,3); } while(gcd(gcd(a1,Math.abs(a0)),b)>1);
+    const k = ri(2,3);
+    return {
+      q: Frac(lin([Mono(k*a1,2,0), Mono(k*a0,1,1)]), Mono(k*b,1,0)),
+      s: Frac(lin([Mono(a1,1,0), Mono(a0,0,1)]), Mono(b))
+    };
+  }
+  if(type === 'multi3'){
+    let a1,a0,az,d;
+    do {
+      a1=ri(1,3); a0=ri(-2,3); if(!a0)a0=ri(1,2);
+      az=ri(-2,3); if(!az)az=ri(1,2);
+      d=ri(2,4);
+    } while(gcd(gcd(gcd(a1,Math.abs(a0)),Math.abs(az)),d)>1);
+    const k = ri(2,3);
+    return {
+      q: Frac(lin([Mono(k*a1,1,0,0), Mono(k*a0,0,1,0), Mono(k*az,0,0,1)]), Mono(k*d)),
+      s: Frac(lin([Mono(a1,1,0,0), Mono(a0,0,1,0), Mono(az,0,0,1)]), Mono(d))
+    };
+  }
+  if(type === 'multi3z'){
+    // (a x z + b y z + c z^2) / (d z) → (a x + b y + c z) / d
+    let a,b,c,d;
+    do {
+      a=ri(1,3); b=ri(-2,3); if(!b)b=ri(1,2);
+      c=ri(-2,3); if(!c)c=ri(1,2); d=ri(1,3);
+    } while(gcd(gcd(gcd(a,Math.abs(b)),Math.abs(c)),d)>1);
+    const k = ri(2,3);
+    const useSq = Math.random() < 0.4;
+    if(useSq){
+      // numerator and denom both with z^2
+      return {
+        q: Frac(lin([Mono(k*a,1,0,2), Mono(k*b,0,1,2), Mono(k*c,0,0,3)]), Mono(k*d,0,0,2)),
+        s: Frac(lin([Mono(a,1,0,0), Mono(b,0,1,0), Mono(c,0,0,1)]), Mono(d))
+      };
+    }
+    return {
+      q: Frac(lin([Mono(k*a,1,0,1), Mono(k*b,0,1,1), Mono(k*c,0,0,2)]), Mono(k*d,0,0,1)),
+      s: Frac(lin([Mono(a,1,0,0), Mono(b,0,1,0), Mono(c,0,0,1)]), Mono(d))
+    };
+  }
+  if(type === 'multi3xyz'){
+    // (a x y z + b x z^2) / (c x z) → (a y + b z) / c
+    let a,b,c;
+    do { a=ri(1,3); b=ri(-2,3); if(!b)b=ri(1,2); c=ri(1,3); } while(gcd(gcd(a,Math.abs(b)),c)>1);
+    const k = ri(2,3);
+    return {
+      q: Frac(lin([Mono(k*a,1,1,1), Mono(k*b,1,0,2)]), Mono(k*c,1,0,1)),
+      s: Frac(lin([Mono(a,0,1,0), Mono(b,0,0,1)]), Mono(c))
+    };
+  }
+  if(type === 'sumFrac' || type === 'subFrac'){
+    const sign = type === 'subFrac' ? -1 : 1;
+    const op = type === 'subFrac' ? '-' : '+';
+    const [vA, vB] = pickTwoDistinct(nv);
+    const sameDen = Math.random() < 0.4;
+    if(sameDen){
+      // (a*va + b*vb) / d  via  (a*va/d) ± (b*vb/d)
+      const d = ri(2,5);
+      const a = ri(1,4), b = ri(1,4);
+      const f1 = Frac(Mono(a, vA[0], vA[1], vA[2]), Mono(d));
+      const f2 = Frac(Mono(b, vB[0], vB[1], vB[2]), Mono(d));
+      const sumNum = lin([Mono(a, vA[0], vA[1], vA[2]), Mono(sign*b, vB[0], vB[1], vB[2])]);
+      const g = gcd(gcd(a, Math.abs(b)), d);
+      const sN = g > 1 ? lin([Mono(a/g, vA[0], vA[1], vA[2]), Mono(sign*b/g, vB[0], vB[1], vB[2])]) : sumNum;
+      const sD = Mono(d/g);
+      return { q: {t:'O', op, a:f1, b:f2}, s: Frac(sN, sD) };
+    } else {
+      // (a*va / d1) ± (b / d2), d2 = k*d1
+      const d1 = ri(2,4);
+      const k = ri(2,3);
+      const d2 = k * d1;
+      const a = ri(1,4), b = ri(1,4);
+      const f1 = Frac(Mono(a, vA[0], vA[1], vA[2]), Mono(d1));
+      const f2 = Frac(Mono(b), Mono(d2));
+      const sumNum = lin([Mono(a*k, vA[0], vA[1], vA[2]), Mono(sign*b)]);
+      const g = gcd(gcd(a*k, Math.abs(b)), d2);
+      const sN = g > 1 ? lin([Mono(a*k/g, vA[0], vA[1], vA[2]), Mono(sign*b/g)]) : sumNum;
+      const sD = Mono(d2/g);
+      return { q: {t:'O', op, a:f1, b:f2}, s: Frac(sN, sD) };
+    }
+  }
+  if(type === 'mulFrac'){
+    // (a*va / b) * (c / d*vb)
+    const [vA, vB] = pickTwoDistinct(nv);
+    const a = ri(1,4), b = ri(2,4), c = ri(1,4), d = ri(2,4);
+    const f1 = Frac(Mono(a, vA[0], vA[1], vA[2]), Mono(b));
+    const f2 = Frac(Mono(c), Mono(d, vB[0], vB[1], vB[2]));
+    // result: (a c * va) / (b d * vb)
+    let nc = a*c, dc = b*d;
+    const g = gcd(nc, dc);
+    nc /= g; dc /= g;
+    // cancel matching variables if vA===vB (only if nv=1 or random duplicate)
+    let nx = vA[0], ny = vA[1], nz = vA[2];
+    let dx = vB[0], dy = vB[1], dz = vB[2];
+    const mx = Math.min(nx, dx), my = Math.min(ny, dy), mz = Math.min(nz, dz);
+    nx -= mx; ny -= my; nz -= mz;
+    dx -= mx; dy -= my; dz -= mz;
+    return { q: {t:'O', op:'*', a:f1, b:f2}, s: Frac(Mono(nc, nx, ny, nz), Mono(dc, dx, dy, dz)) };
+  }
+  if(type === 'divFrac'){
+    // (a*va / b) / (c*vb / d) = (a d * va) / (b c * vb)
+    const [vA, vB] = pickTwoDistinct(nv);
+    const a = ri(1,4), b = ri(2,4), c = ri(1,4), d = ri(2,4);
+    const f1 = Frac(Mono(a, vA[0], vA[1], vA[2]), Mono(b));
+    const f2 = Frac(Mono(c, vB[0], vB[1], vB[2]), Mono(d));
+    let nc = a*d, dc = b*c;
+    const g = gcd(nc, dc); nc /= g; dc /= g;
+    let nx = vA[0], ny = vA[1], nz = vA[2];
+    let dx = vB[0], dy = vB[1], dz = vB[2];
+    const mx = Math.min(nx,dx), my = Math.min(ny,dy), mz = Math.min(nz,dz);
+    nx-=mx; ny-=my; nz-=mz; dx-=mx; dy-=my; dz-=mz;
+    // Render division of two fractions with / instead of a stacked fraction over a stacked fraction.
+    return { q: {t:'O', op:'/', a:f1, b:f2}, s: Frac(Mono(nc, nx, ny, nz), Mono(dc, dx, dy, dz)) };
+  }
+  if(type === 'complex'){
+    // ((a x + b) / c) / d   or   a / ((b x + c) / d)
+    if(Math.random() < 0.5){
+      let a,b,c,d;
+      do { a=ri(1,3); b=ri(-2,3); if(!b)b=ri(1,2); c=ri(2,4); d=ri(2,4); }
+      while(gcd(gcd(a,Math.abs(b)), c*d) > 1);
+      const inner = Frac(lin([Mono(a,1), Mono(b)]), Mono(c));
+      return { q: Frac(inner, Mono(d)), s: Frac(lin([Mono(a,1), Mono(b)]), Mono(c*d)) };
+    } else {
+      let a,b,c,d;
+      do { a=ri(1,4); b=ri(1,3); c=ri(-2,3); if(!c)c=ri(1,2); d=ri(2,4); }
+      while(gcd(a*d, gcd(b,Math.abs(c))) > 1);
+      const inner = Frac(lin([Mono(b,1), Mono(c)]), Mono(d));
+      // a / ((b x + c) / d) = a d / (b x + c)
+      return { q: Frac(Mono(a), inner), s: Frac(Mono(a*d), lin([Mono(b,1), Mono(c)])) };
+    }
+  }
+  if(type === 'mixed'){
+    // a + (b x + c) / d  →  (b x + (a d + c)) / d
+    const v = pickVar(nv);
+    let a,b,c,d;
+    do { a=ri(1,4); b=ri(1,3); c=ri(-3,3); if(!c)c=ri(1,2); d=ri(2,4); }
+    while(false);
+    const frac = Frac(lin([Mono(b, v[0], v[1], v[2]), Mono(c)]), Mono(d));
+    const ad = a*d;
+    const sumN = lin([Mono(b, v[0], v[1], v[2]), Mono(ad + c)]);
+    const g = gcd(gcd(b, Math.abs(ad+c)), d);
+    const sN = g > 1 ? lin([Mono(b/g, v[0], v[1], v[2]), Mono((ad+c)/g)]) : sumN;
+    const sD = Mono(d/g);
+    return { q: {t:'O', op:'+', a: Mono(a), b: frac}, s: Frac(sN, sD) };
+  }
+  // fallback
+  return { q: Frac(lin([Mono(2,1), Mono(4)]), Mono(2)), s: Frac(lin([Mono(1,1), Mono(2)]), Mono(1)) };
+}
+
+// === state ===
+let mode = 'explore';
+let forceFracInFrac = false;
+let questionMode = 'all';
+let nv = 2;
+let Q = null;
+let score = 0, streak = 0;
+let found = [];
+
+
+function genFracInFracQ(){
+  // Force questions where either numerator OR denominator contains a fraction.
+  if(Math.random()<0.5){
+    const inner = Frac(Mono(ri(1,4),1), Mono(ri(2,5)));
+    return {
+      q: Frac(inner, Mono(ri(2,5))),
+      s: normalize(Frac(inner, Mono(ri(2,5))))
+    };
+  } else {
+    const inner = Frac(Mono(ri(1,4),1), Mono(ri(2,5)));
+    return {
+      q: Frac(Mono(ri(1,4)), inner),
+      s: normalize(Frac(Mono(ri(1,4)), inner))
+    };
+  }
+}
+
+function afp_fracInFrac(){
+  forceFracInFrac = true;
+  nxtQ();
+}
+
+
+function genSimplifyQ(){
+  return genQ(2); // bestaande vereenvoudig-opgaven (één breuk) uit de generator
+}
+
+function genCombineQ(){
+  const a = ri(1,4), b = ri(1,4);
+  const d1 = Mono(choice([1,2,3]),1,0,0);
+  const d2 = Mono(choice([1,2,3]),0,1,0);
+  return {
+    q:{t:'O',op:'+',a:Frac(Poly([Mono(a,1),Mono(1)]),d1),b:Frac(Poly([Mono(b,1),Mono(-1)]),d2)},
+    s:normalize({t:'O',op:'+',a:Frac(Poly([Mono(a,1),Mono(1)]),d1),b:Frac(Poly([Mono(b,1),Mono(-1)]),d2)})
+  };
+}
+
+function afp_alles(){ questionMode='all'; nxtQ(); }
+function afp_vereenvoudigen(){ questionMode='simplify'; nxtQ(); }
+function afp_samenvoegen(){ questionMode='combine'; nxtQ(); }
+
+// === UI ===
+function setMode(m){
+  mode = 'explore';
+  nxtQ();
+}
+function setDiff(n){
+  nv = 2;
+  nxtQ();
+}
+function nxtQ(){
+  found = [];
+  let tries = 0;
+  do {
+    if(forceFracInFrac || questionMode==='complex') Q = genFracInFracQ();
+    else if(questionMode==='simplify') Q = genSimplifyQ();
+    else if(questionMode==='combine') Q = genCombineQ();
+    else Q = genQ(nv);
+    tries++;
+  } while(tries < 8 && !validQ(Q));
+  forceFracInFrac = false;
+  document.getElementById('afp-q').innerHTML = '<span class="afp-math">' + renderE(Q.q) + '</span>';
+  document.getElementById('afp-inst').textContent = 'Herschrijf de uitdrukking. Gelijkwaardige herschrijvingen worden als correct geteld; de meest recente poging staat bovenaan.';
+  clearEditor();
+  document.getElementById('afp-preview-row').style.display = 'none';
+  document.getElementById('afp-trial-list').innerHTML = '';
+  document.getElementById('afp-trials').style.display = 'none';
+  hideFb();
+  setTimeout(() => document.getElementById('afp-input').focus(), 60);
+}
+function validQ(q){
+  if(!q || !q.q || !q.s) return false;
+  // sanity: q.q and q.s should be equivalent
+  return equiv(q.q, q.s);
+}
+function showFb(msg, type){ /* Feedback is now shown in the trial list only. */ }
+function hideFb(){ /* No separate bottom feedback area. */ }
+function upd(){ /* score and streak counters removed from the interface. */ }
+
+function editorTextFromNode(node){
+  if(node.nodeType === Node.TEXT_NODE) return node.nodeValue;
+  if(node.nodeType !== Node.ELEMENT_NODE) return '';
+  if(node.classList && node.classList.contains('afp-frac-edit')){
+    const n = node.querySelector('.num');
+    const d = node.querySelector('.den');
+    return '((' + editorTextFromNode(n).trim() + ')/(' + editorTextFromNode(d).trim() + '))';
+  }
+  return Array.from(node.childNodes).map(editorTextFromNode).join('');
+}
+function getEditorRaw(){
+  return editorTextFromNode(document.getElementById('afp-input')).replace(/\u00a0/g,' ');
+}
+function getEditorDisplayHtml(){
+  const clone = document.getElementById('afp-input').cloneNode(true);
+  clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+  return clone.innerHTML.trim() || escapeHtml(getEditorRaw().trim());
+}
+function clearEditor(){
+  const input = document.getElementById('afp-input');
+  input.innerHTML = '';
+}
+function resetInput(){
+  clearEditor();
+  document.getElementById('afp-input').focus();
+}
+function placeCaretAtEnd(el){
+  el.focus();
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  range.collapse(false);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+}
+function activeEditor(){
+  const sel = window.getSelection();
+  if(sel && sel.rangeCount){
+    let node = sel.getRangeAt(0).commonAncestorContainer;
+    if(node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+    const editor = node && node.closest ? node.closest('#afp-input, #afp-own-input') : null;
+    if(editor) return editor;
+  }
+  return document.activeElement && document.activeElement.closest
+    ? (document.activeElement.closest('#afp-input, #afp-own-input') || document.getElementById('afp-input'))
+    : document.getElementById('afp-input');
+}
+function insertNodeAtCaret(node){
+  const editor = activeEditor();
+  editor.focus();
+  const sel = window.getSelection();
+  let range;
+  if(sel.rangeCount && editor.contains(sel.getRangeAt(0).commonAncestorContainer)){
+    range = sel.getRangeAt(0);
+  } else {
+    range = document.createRange();
+    range.selectNodeContents(editor);
+    range.collapse(false);
+  }
+  range.deleteContents();
+  range.insertNode(node);
+  const spacer = document.createTextNode('\u00a0');
+  node.after(spacer);
+  range = document.createRange();
+  range.setStartAfter(spacer);
+  range.collapse(true);
+  sel.removeAllRanges();
+  sel.addRange(range);
+}
+function updatePreview(){
+  // The editor itself is now the rendered input area, so there is no separate preview window.
+}
+function insertFrac(){
+  const frac = document.createElement('span');
+  frac.className = 'afp-frac-edit';
+  frac.contentEditable = 'false';
+  frac.innerHTML = '<span class="num" contenteditable="true"></span><span class="bar"></span><span class="den" contenteditable="true"></span>';
+  insertNodeAtCaret(frac);
+  setTimeout(() => {
+    const n = frac.querySelector('.num');
+    const range = document.createRange();
+    range.selectNodeContents(n);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    n.focus();
+  }, 0);
+}
+function insertSym(sym){
+  const editor = activeEditor();
+  editor.focus();
+  document.execCommand('insertText', false, sym);
+}
+function addTrial(exprHtml, ok, label){
+  const box = document.getElementById('afp-trials');
+  const list = document.getElementById('afp-trial-list');
+  const row = document.createElement('div');
+  row.className = 'afp-trial ' + (label === 'correct answer' ? 'answer' : (ok ? 'correct' : 'fout'));
+  row.innerHTML = '<span class="afp-math" style="font-size:1.1rem;">' + exprHtml + '</span><span class="mark">' + label + '</span>';
+  list.insertBefore(row, list.firstChild);
+  box.style.display = 'block';
+}
+function check(){
+  if(!Q) return;
+  const raw = getEditorRaw().trim();
+  const displayHtml = getEditorDisplayHtml();
+  if(!raw){
+    addTrial('Voer een uitdrukking in.', false, 'leeg');
+    return;
+  }
+  const u = parseInput(raw);
+  if(!u){
+    addTrial(displayHtml, false, 'niet herkend');
+    streak = 0; upd();
+    return;
+  }
+  if(!equiv(u, Q.q)){
+    addTrial(displayHtml, false, 'fout');
+    streak = 0; upd();
+    return;
+  }
+  if(renderE(u) === renderE(Q.q)){
+    addTrial(displayHtml, true, 'origineel');
+    score++; streak++; upd();
+    clearEditor();
+    document.getElementById('afp-input').focus();
+    return;
+  }
+  const renderedU = renderE(u);
+  if(found.some(f => renderE(f) === renderedU)){
+    addTrial(displayHtml, true, 'herhaling');
+    return;
+  }
+  const sim = isSimplified(u);
+  found.push(u);
+  addTrial(displayHtml, true, sim ? 'correct, vereenvoudigd' : 'correct');
+  score++; streak++; upd();
+  clearEditor();
+  document.getElementById('afp-input').focus();
+}
+function hint(){
+  if(!Q) return;
+  if(Q.q.t === 'O' || (Q.q.t === 'F' && (Q.q.n.t === 'O' || Q.q.n.t === 'F' || Q.q.d.t === 'F'))){
+    showFb(`Hint: combine into a single fraction. The simplified denominator should be <span class="afp-math">${renderE(Q.s.t === 'F' ? Q.s.d : Mono(1))}</span>.`, 'info');
+  } else if(Q.q.t === 'F' && isPoly(Q.q.n) && isPoly(Q.q.d)){
+    const c = commonFactor(Q.q.n, Q.q.d);
+    if(c.c !== 1 || c.x || c.y || c.z){
+      showFb(`Hint: numerator and denominator share a common factor of <span class="afp-math">${monoH(c, false)}</span>. Delen both by it.`, 'info');
+    } else {
+      showFb('Hint: this expression is already in a simple form.', 'info');
+    }
+  } else {
+    showFb('Hint: try expanding or combining the parts.', 'info');
+  }
+}
+function showA(){
+  if(!Q) return;
+  streak = 0; upd();
+  addTrial(renderE(Q.s), true, 'correct answer');
+}
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+
+function toggleOwnProblem(force){
+  const panel = document.getElementById('afp-own-panel');
+  const show = typeof force === 'boolean' ? force : panel.style.display === 'none';
+  panel.style.display = show ? 'block' : 'none';
+  if(show){
+    document.getElementById('afp-own-error').style.display = 'none';
+    setTimeout(() => document.getElementById('afp-own-input').focus(), 30);
+  }
+}
+function clearOwnProblem(){
+  document.getElementById('afp-own-input').innerHTML = '';
+  const err = document.getElementById('afp-own-error');
+  err.style.display = 'none';
+  document.getElementById('afp-own-input').focus();
+}
+function ownProblemRaw(){
+  return editorTextFromNode(document.getElementById('afp-own-input')).replace(/\u00a0/g,' ').trim();
+}
+function setOwnProblem(){
+  const raw = ownProblemRaw();
+  const err = document.getElementById('afp-own-error');
+  if(!raw){
+    err.textContent = 'Typ eerst een uitdrukking.';
+    err.style.display = 'block';
+    return;
+  }
+  const parsed = parseInput(raw);
+  if(!parsed){
+    err.textContent = 'Ik kon deze uitdrukking niet verwerken. Probeer rechtstreeks te typen, gebruik / of de breukknop.';
+    err.style.display = 'block';
+    return;
+  }
+  const simplifiedCandidate = normalize(parsed);
+  Q = { q: parsed, s: simplifiedCandidate || parsed, own: true };
+  found = [];
+  document.getElementById('afp-q').innerHTML = '<span class="afp-math">' + renderE(Q.q) + '</span>';
+  document.getElementById('afp-inst').textContent = 'Own opgave: rewrite this expression in an equivalent form.';
+  clearEditor();
+  document.getElementById('afp-trial-list').innerHTML = '';
+  document.getElementById('afp-trials').style.display = 'none';
+  err.style.display = 'none';
+  toggleOwnProblem(false);
+  setTimeout(() => document.getElementById('afp-input').focus(), 60);
+}
+
+// expose globals
+window.afp_setMode = setMode;
+window.afp_setDiff = setDiff;
+window.afp_nxtQ = nxtQ;
+window.afp_fracInFrac = function(){ questionMode='complex'; afp_fracInFrac(); };
+window.afp_alles = afp_alles;
+window.afp_vereenvoudigen = afp_vereenvoudigen;
+window.afp_samenvoegen = afp_samenvoegen;
+window.afp_toggleOwnProblem = toggleOwnProblem;
+window.afp_clearOwnProblem = clearOwnProblem;
+window.afp_setOwnProblem = setOwnProblem;
+window.afp_check = check;
+window.afp_hint = hint;
+window.afp_showA = showA;
+window.afp_resetInput = resetInput;
+window.afp_insertFrac = insertFrac;
+window.afp_insertSym = insertSym;
+window.afp_updatePreview = updatePreview;
+
+// initial setup: generated opgaves use x and y only.
+mode = 'explore';
+nxtQ();
+})();
+</script>
+
+</body>
+</html>
